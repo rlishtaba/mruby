@@ -91,6 +91,7 @@ module MRuby
 
       MRuby::Build.current = MRuby.targets[@name]
       MRuby.targets[@name].instance_eval(&block)
+
     end
 
     def enable_debug
@@ -244,6 +245,18 @@ module MRuby
     def initialize(name, build_dir=nil, &block)
       @test_runner = Command::CrossTestRunner.new(self)
       super
+
+      puts "**** Build for: #{@name.inspect}"
+      puts "**** Build will be in: #{@build_dir.inspect}"
+      puts "cc      : #{@cc.command}"
+      puts "cxx     : #{@cxx.command}  "
+      puts "objc    : #{@objc.command}"
+      puts "yacc    : #{@yacc.command}"
+      puts "gperf   : #{@gperf.command}"
+      puts "asm     : #{@asm.command}"
+      puts "linker  : #{@linker.command}"
+      puts "archiver: #{@archiver.command}"
+      puts "****"
     end
 
     def mrbcfile
