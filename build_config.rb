@@ -140,18 +140,17 @@ MRuby::CrossBuild.new("telium") do |conf|
     -Wno-deprecated-declarations
     -Wno-write-strings
     -Wno-attributes
-    -std=gnu++0x
     -D_GLIBCXX_USE_C99
     -D_GLIBCXX_USE_C99_DYNAMIC
     )
     cc.compile_options = "%{flags} -o %{outfile} -c %{infile}"
 
     #configuration for low memory environment
-    # cc.defines << %w(MRB_HEAP_PAGE_SIZE=64)
-    # cc.defines << %w(MRB_USE_IV_SEGLIST)
-    # cc.defines << %w(KHASH_DEFAULT_SIZE=8)
-    # cc.defines << %w(MRB_STR_BUF_MIN_SIZE=20)
-    # cc.defines << %w(MRB_GC_STRESS)
+    #cc.defines << %w(MRB_HEAP_PAGE_SIZE=16)
+    #cc.defines << %w(MRB_USE_IV_SEGLIST)
+    #cc.defines << %w(KHASH_DEFAULT_SIZE=8)
+    #cc.defines << %w(MRB_STR_BUF_MIN_SIZE=20)
+    #cc.defines << %w(MRB_GC_STRESS)
     #cc.defines << %w(DISABLE_STDIO) #if you dont need stdio.
     #cc.defines << %w(POOL_PAGE_SIZE=1000) #effective only for use with mruby-eval
   end
@@ -160,7 +159,7 @@ MRuby::CrossBuild.new("telium") do |conf|
     cxx.command = "#{BIN_PATH}/arm-elf-g++"
     cxx.include_paths = conf.cc.include_paths.dup
     cxx.flags = conf.cc.flags.dup
-    cxx.flags << conf.cc.flags.dup + %w( -fno-rtti -fno-exceptions)
+    cxx.flags << conf.cc.flags.dup + %w(-std=gnu++0x)
     cxx.defines = conf.cc.defines.dup
     cxx.compile_options = conf.cc.compile_options.dup
   end
@@ -169,23 +168,53 @@ MRuby::CrossBuild.new("telium") do |conf|
     archiver.command = "#{BIN_PATH}/arm-elf-ar"
     archiver.archive_options = 'rcs %{outfile} %{objs}'
   end
-
+  
+  conf.linker do |linker|
+    linker.command = "#{BIN_PATH}/arm-elf-gcc"
+    # linker.flags = %w(-m32 -march=i586)
+    # linker.flags << "--sysroot=#{GALILEO_SYSROOT}"
+    linker.flags << %w(-Os -Wl)
+    linker.libraries = %w(m)
+  end
+  
   #no executables
   conf.bins = []
 
   #do not build executable test
-  # conf.build_mrbtest_lib_only
+  conf.build_mrbtest_lib_only
 
   #disable C++ exception
   conf.disable_cxx_exception
+  
+  conf.file_separator = '/'
 
   #gems from core
-  # conf.gem :core => "mruby-print"
-  # conf.gem :core => "mruby-math"
-  # conf.gem :core => "mruby-enum-ext"
+  
+  # conf.gembox 'default'
+  conf.gem :core => "mruby-sprintf"
+  conf.gem :core => "mruby-print"
+  conf.gem :core => "mruby-math"
+  conf.gem :core => "mruby-time"
+  conf.gem :core => "mruby-struct"
+  conf.gem :core => "mruby-enum-ext"
+  conf.gem :core => "mruby-string-ext"
+  conf.gem :core => "mruby-numeric-ext"
+  conf.gem :core => "mruby-array-ext"
+  conf.gem :core => "mruby-hash-ext"
+  conf.gem :core => "mruby-range-ext"
+  conf.gem :core => "mruby-proc-ext"
+  conf.gem :core => "mruby-symbol-ext"
+  conf.gem :core => "mruby-random"
+  conf.gem :core => "mruby-object-ext"
+  conf.gem :core => "mruby-objectspace"
+  conf.gem :core => "mruby-fiber"
+  conf.gem :core => "mruby-toplevel-ext"
 
+  #lightweigh regular expression
+  conf.gem :github => "masamitsu-murase/mruby-hs-regexp", :branch => "master" 
   #light-weight regular expression
-  # conf.gem :github => "masamitsu-murase/mruby-hs-regexp", :branch => "master"
+  
+  conf.gem :github => "masamitsu-murase/mruby-hs-regexp", :branch => "master"  
 
   #Arduino API
   #conf.gem :github =>"kyab/mruby-arduino", :branch => "master"
