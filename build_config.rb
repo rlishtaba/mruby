@@ -124,7 +124,7 @@ end
 # end
 
 
-MRuby::CrossBuild.new("telium") do |conf|
+MRuby::CrossBuild.new("arm") do |conf|
   toolchain :gcc
 
   BIN_PATH = "C:/Tools/arm-elf-gcc-4.7.3-r1/bin"
