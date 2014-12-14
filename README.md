@@ -15,7 +15,6 @@ program under the "test" directory for an example.
 This achievement was sponsored by the Regional Innovation Creation R&D Programs
 of the Ministry of Economy, Trade and Industry of Japan.
 
-
 ## How to get mruby
 
 The stable version 1.0.0 of mruby can be downloaded via the following URL:
